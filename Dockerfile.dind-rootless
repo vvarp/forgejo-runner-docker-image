@@ -43,6 +43,18 @@ RUN apk add --no-cache \
     sudo \
     && corepack enable
 
+# Install Helm and kubectl
+ARG HELM_VERSION=v3.18.4
+ARG KUBECTL_VERSION=v1.34.3
+RUN set -eux; \
+    curl -fsSL "https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz" | tar xz -C /tmp && \
+    mv /tmp/linux-amd64/helm /usr/local/bin/helm && \
+    rm -rf /tmp/linux-amd64 && \
+    curl -fsSLo /usr/local/bin/kubectl "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl" && \
+    chmod +x /usr/local/bin/helm /usr/local/bin/kubectl && \
+    helm version --short && \
+    kubectl version --client --short
+
 # Entrypoints and TLS defaults
 COPY dockerd-entrypoint.sh /usr/local/bin/
 COPY docker-entrypoint.sh /usr/local/bin/
